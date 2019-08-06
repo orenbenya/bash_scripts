@@ -1,0 +1,18 @@
+#! /bin/bash -e
+
+curl -o /tmp/a.json -u USER:PASS "MONITOR_URL"
+awk -F',' '{ print $5 }' /tmp/a.json > average.json
+lines=`wc -l average.json | awk '{print $1}'`
+total=`awk '{ sum += $1 } END { print sum }' average.json`
+avrg=`bc<<<$total/$lines`
+
+if [ "$avrg" -ge "1" ];
+  then  echo "status code is `echo $?`, exiting"
+  exit 1;
+  else  echo "All is well"
+  exit 0 ;
+fi
+
+unset lines
+unset total
+unset avrg
